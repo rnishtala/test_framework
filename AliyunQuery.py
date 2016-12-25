@@ -7,7 +7,7 @@
 
 ########################################################################################
 # Pre-requisite(s): This script requires
-#                   
+#
 ########################################################################################
 
 
@@ -47,7 +47,7 @@ class AliyunQuery(TestBase):
         Run the the test scenario
         """
         logging.debug('Inside run()...')
-        return doParallel.doParallel(1,getECSinstances.getECSinstances,[(hostname, ecsid, 'us-east-1')])
+        return doParallel.doParallel(1,getECSinstances.getECSinstances,[(region, instanceId)])
 
     def analyze(self, results):
         """

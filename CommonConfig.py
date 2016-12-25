@@ -10,8 +10,18 @@
 #######################################################################################################
 # CREDENTIALS
 #######################################################################################################
-AccessKeyID = 'LTAIbY4B7xu5VuKB'
-AccessKeySecret = 'Tdxf0ijim1fAIG9cgSpw1WCAVWOHhk'
+AccessKeyID = ''
+AccessKeySecret = ''
+
+######################################################################################################
+# Services
+######################################################################################################
+ServiceInfo = namedtuple('ServiceInfo', 'name, url, version, in_region, in_zone')
+SERVICES = {"ram": ServiceInfo("ram", "https://ram.aliyuncs.com", "2015-05-01", True, False),
+            "cms": ServiceInfo("cms", "http://metrics.aliyuncs.com", "2016-03-18", True, False),
+            "ecs": ServiceInfo("ecs", "http://ecs.aliyuncs.com", "2014-05-26", True, True),
+            "rds": ServiceInfo("rds", "http://rds.aliyuncs.com", "2014-08-15", True, True),
+            "slb": ServiceInfo("slb", "http://slb.aliyuncs.com", "2014-05-15", True, False)}
 
 LinPC = {'hostname':'ubuntu-dls-test'}
 
@@ -45,12 +55,12 @@ TEST = {'AliyunQuery':'./AliyunQuery/'}
 summary_file = {'AliyunQuery':'AliyunQuery'}
 
 ###################################################################################################
-#Throughtput results
+#results
 ###################################################################################################
 results = {'AliyunQuery':'summary'}
 
 ###################################################################################################
-#Throughput fieldname
+#fieldname
 ###################################################################################################
 results_field = {'AliyunQuery':'results'}
 #################################################################################################

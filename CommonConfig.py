@@ -10,8 +10,8 @@
 #######################################################################################################
 # CREDENTIALS
 #######################################################################################################
-AccessKeyID = 'LTAIbY4B7xu5VuKB'
-AccessKeySecret = 'Tdxf0ijim1fAIG9cgSpw1WCAVWOHhk'
+AccessKeyID = ''
+AccessKeySecret = ''
 
 LinPC = {'hostname':'ubuntu-dls-test'}
 

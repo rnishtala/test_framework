@@ -18,10 +18,9 @@ import os
 import CommonConfig
 import logging
 import Log
-import execRemoteCommand
+import getInstanceData
 import utility
 import doParallel
-import sqlite3
 import csv
 
 class AliyunQuery(TestBase):
@@ -29,7 +28,9 @@ class AliyunQuery(TestBase):
     """
     Class inheriting from TestBase executes Aliyun Query for ECS instances
     """
-    website_to_ping = []
+
+    def __init__(self):
+        self.HTTP_SUCCESS = 200
 
     def setup(self):
         """
@@ -47,13 +48,18 @@ class AliyunQuery(TestBase):
         Run the the test scenario
         """
         logging.debug('Inside run()...')
-        return doParallel.doParallel(1,getECSinstances.getECSinstances,[(region, instanceId)])
+        params = {}
+        params["RegionId"] = CommonConfig.hosts[0][0]
+        params["InstanceId"] = CommonConfig.hosts[0][1]
+        return doParallel.doParallel(1,getInstanceData.getInstanceData,[(params, 'ecs', 'GET')])
 
     def analyze(self, results):
         """
         Analyze the results
         """
-        pass
+        if results[0][2] == self.HTTP_SUCCESS:
+            return 'PASS'
+
 
     def cleanup(self):
         """

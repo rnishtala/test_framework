@@ -66,7 +66,6 @@ def doParallel(num, func, params_lst, interim_func_lst=[], interim_params_lst=()
             else:
                 logging.info("Number of threads in pool: "+str(num))
                 tpool.apply_async(func, params_lst[i], callback=cback)
-        time.sleep(WAIT_TIME_BETWEEN)
         if interim_func_lst != []:
             if len(interim_params_lst) != len(interim_func_lst):
                 logging.error('# of Parameter tuples does not match # of Intermediate functions...')
@@ -84,7 +83,7 @@ def doParallel(num, func, params_lst, interim_func_lst=[], interim_params_lst=()
             tpool.close()
             tpool.join()
             #thread_results.append(async_result.get())
-        logging.debug('Thread results %s', str(thread_results))
+        logging.debug('Thread results getInstanceData %s', str(thread_results))
         return thread_results
     except KeyboardInterrupt:
         logging.warning('Received ^C. Terminating thread...')

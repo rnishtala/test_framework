@@ -30,7 +30,6 @@ def clean():
     """
 
     TestConfig.TESTS[num].cleanup()
-    utility.hold_off(TestConfig.LOG_DELAY)
     combineLogs()
 
     for t in range(num, num_of_tests):
@@ -59,40 +58,6 @@ def combineLogs():
     cmd = "cd " + TestConfig.LOG_LOC + "; dir=$(ls -ltr Leda*.log | awk '{print $9}' | sed s/Leda_//g | sed s/.log//g); mkdir $dir; FILES1=$(ls -ltr Leda*.log | awk '{printf \"%s \", $9}'); for f in $FILES1; do mv $f $dir; done; FILES2=$(ls -al SYSLOG*.zip | awk '{printf \"%s \", $9}'); for f in $FILES2; do mv $f $dir; done"
     subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def writeToCsv(results):
-        """
-        Prepares a csv file to log a summary of tests run
-        """
-        csvHeader = ['Time Stamp']
-        #Prepare a csv file to log the summary of tests run
-        SUMMARY_FILE = TestConfig.CSV_FILE_LOCATION + "summary.csv"
-        if os.path.isfile(SUMMARY_FILE):
-            fp = open(SUMMARY_FILE,'a')
-            writer = csv.writer(fp)
-            logging.info('File ' + SUMMARY_FILE + ' exists! Opened in append mode.')
-        else:
-            fp = open(SUMMARY_FILE,'w')
-            writer = csv.writer(fp)
-            logging.info('File ' + SUMMARY_FILE + ' created, Opened in write mode')
-
-        #create csv header
-        #for i in range(0,num_of_tests):
-        for j in range(len(results)):
-               csvHeader.append('Test#' + str(results[j][1]) + ' ' + 'Name')
-               csvHeader.append('status')
-        writer.writerow(csvHeader)
-
-        #current timestamp
-        now = datetime.datetime.now()
-        current_time = now.strftime("%Y-%m-%d %H:%M")
-        csvData = [str(current_time)]
-
-        #store test results in csv file
-        #for i in range(0,num_of_tests):
-        for j in range(len(results)):
-               csvData.append(str(results[j][0]))
-               csvData.append(str(results[j][2]))
-        writer.writerow(csvData)
 
 if __name__ == "__main__":
     """
@@ -115,25 +80,19 @@ if __name__ == "__main__":
             Test_Name = TestConfig.TESTS_MAPPING[str(TestConfig.TESTS[num]).split('.')[0][1:]]
             logging.info('================================== BEGIN OF %s ==================================', Test_Name)
             if test.performTest(str(TestConfig.TESTS[num]).split('.')[0][1:]) != "PASS":
-                results.append ((Test_Name, num+1, 'FAIL'))
+                logging.debug('Completed PerformTest')
+                results.append((Test_Name, num+1, 'FAIL'))
                 print "Test #", num+1, "[",  Test_Name, "]:\tFAIL"
                 logging.info('Test # %d [ %s ]: FAIL', num+1, Test_Name)
             else:
-                results.append ((Test_Name, num+1, 'PASS'))
+                logging.debug('Completed PerformTest')
+                results.append((Test_Name, num+1, 'PASS'))
                 print "Test #", num+1, "[", Test_Name, "]:\tPASS"
                 logging.info('Test # %d [ %s ]: PASS', num+1, Test_Name)
                 num_pass += 1
             num += 1
             logging.info('================================== END OF %s ==================================', Test_Name)
-            if num != num_of_tests:
-                # Wait for some time between tests
-                if Test_Name in TestConfig.SPECIAL_TESTS or 'BGP' in Test_Name or 'RIP' in Test_Name:
-                    utility.hold_off(TestConfig.SPECIAL_INBETWEEN_WAIT_TIME)
-                else:
-                    utility.hold_off(TestConfig.INBETWEEN_WAIT_TIME)
-        #logging.info('Harvesting Logs ...')
-        #utility.hold_off(TestConfig.LOG_DELAY)
-        #combineLogs()
+
         print " "
         print "TOTAL # of tests:", num_of_tests
         logging.info('TOTAL # of tests: %d', num_of_tests)
@@ -141,12 +100,6 @@ if __name__ == "__main__":
         logging.info('PASSED: %d', num_pass)
         print "FAILED:", num_of_tests - num_pass
         logging.info('FAILED: %d', num_of_tests - num_pass)
-        print " "
-        for i in range(len(results)):
-            if results[i] != '':
-                logging.info('Test # %d [ %s ]: %s',results[i][1],results[i][0],results[i][2])
-        #write to csv
-        writeToCsv(results)
 
     except KeyboardInterrupt:
         print "Detected ^C. Invoking cleanup()..."

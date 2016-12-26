@@ -38,7 +38,7 @@ class TestBase:
         return
 
     @abc.abstractmethod
-    def analyze(self, results):
+    def analyze(self, results, status):
         """
         Analyze the results of test
         """
@@ -58,6 +58,7 @@ class TestBase:
         Call setup, run and cleanup funtions in order
         """
         outcome = 'FAIL'
+        result = []
 
         if self.setup():
             result = self.run()

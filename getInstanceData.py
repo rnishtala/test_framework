@@ -13,11 +13,12 @@
 ################################################################################
 
 
-import getopt
+import argparse
 import sys
 import ast
 import time
 import requests
+import simplejson, dict2xml
 
 import CommonConfig
 from CommonConfig import SERVICES
@@ -69,7 +70,7 @@ def getInstanceData(params, service, method='GET'):
     except requests.exceptions.HTTPError:
         raise requests.exceptions.HTTPError
 
-    return (response.content, response.encoding, response.status_code)
+    return (response.json(), response.encoding, response.status_code, session)
 
 def update_params(params, method):
     """
@@ -107,31 +108,36 @@ if __name__ == "__main__":
     service = ''
     logging.getLogger("requests.packages.urllib3")
 
-    try:
-       opts, args = getopt.getopt(sys.argv[1:], "hH:r:i:s:a", ["help", "RegionId=", "InstanceId=", "Service=", "Action="])
-    except getopt.GetoptError:
-        printUsage()
-        sys.exit(2)
+    parser = argparse.ArgumentParser(description='Request parameters')
+    parser.add_argument('-r','--RegionId', help='Region ID of the device', required=True)
+    parser.add_argument('-i','--InstanceId', help='Instance ID', required=True)
+    args = vars(parser.parse_args())
 
-    logging.debug('In main()...')
-
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            printUsage()
-            sys.exit(3)
-        elif opt in ("-r", "--RegionId"):
-            region = arg
-            #host = ast.literal_eval(arg);
-        elif opt in ("-i", "--InstanceId"):
-            instanceId = arg
+    region = args['RegionId']
+    instanceId = args['InstanceId']
 
     params["RegionId"] = region
     params["InstanceId"] = instanceId
 
     logging.info('=============== Start of getCPUutilization ===============')
 
-    ret_val = getInstanceData(params, service)
+    (response, encoding, status, session) = getInstanceData(params, service)
 
-    print ret_val
+    print type(response)
+    instance_data = response['MonitorData']['InstanceMonitorData']
+    # print instance_data
+
+    for instance in instance_data:
+        instance['Time'] = instance.pop('TimeStamp')
+
+    print instance_data[0]
+
+    instance_data[0]['InternetReceive'] = instance_data[0].pop('InternetRX')
+
+    print instance_data[0]
+
+    xmldata = dict2xml.dict2xml(instance_data[0])
+
+    # print xmldata
 
     logging.info('=============== End of getCPUutilization ===============')

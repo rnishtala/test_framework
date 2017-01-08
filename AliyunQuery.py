@@ -31,6 +31,7 @@ class AliyunQuery(TestBase):
 
     def __init__(self):
         self.HTTP_SUCCESS = 200
+        self._params = {"RegionId": CommonConfig.hosts[0][0], "InstanceId": CommonConfig.hosts[0][1]}
 
     def setup(self):
         """
@@ -49,9 +50,7 @@ class AliyunQuery(TestBase):
         """
         logging.debug('Inside run()...')
         params = {}
-        params["RegionId"] = CommonConfig.hosts[0][0]
-        params["InstanceId"] = CommonConfig.hosts[0][1]
-        return doParallel.doParallel(1,getInstanceData.getInstanceData,[(params, 'ecs', 'GET')])
+        return doParallel.doParallel(1,getInstanceData.getInstanceData,[(self._params, 'ecs', 'GET')])
 
     def analyze(self, results):
         """

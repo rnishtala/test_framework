@@ -10,8 +10,8 @@
 #######################################################################################################
 # CREDENTIALS
 #######################################################################################################
-AccessKeyID = ''
-AccessKeySecret = ''
+AccessKeyID = '#####'
+AccessKeySecret = '#####'
 
 LinPC = {'hostname':'ubuntu-dls-test'}
 
@@ -24,7 +24,7 @@ VALID_LOG_LEVELS = [1, 2, 3, 4, 5]
 # 3 = WARNING
 # 4 = INFO
 # 5 = DEBUG
-CURR_LOG_LEVEL = 5
+CURR_LOG_LEVEL = 4
 LOG_FILE_LOCATION = '/var/log/leda/ftp/' # Change this will not create the directory structure
 #############################################################################################################
 
